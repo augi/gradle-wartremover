@@ -1,2 +1,3 @@
+language: groovy
 after_success:
   - test $TRAVIS_PULL_REQUEST == "false" && test "$TRAVIS_TAG" != "" && test $TRAVIS_REPO_SLUG == "augi/gradle-wartremover" && ./gradlew bintrayUpload publishPlugins -Pversion="$TRAVIS_TAG" --info
