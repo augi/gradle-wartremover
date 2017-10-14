@@ -1,0 +1,90 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        classpath 'com.gradle.publish:plugin-publish-plugin:0.9.8'
+    }
+}
+
+plugins {
+    id 'net.researchgate.release' version '2.6.0'
+}
+
+group 'cz.augi'
+version = version == 'unspecified' ? 'DEVELOPER-SNAPSHOT' : version
+
+apply plugin: 'groovy'
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: "com.gradle.plugin-publish"
+
+repositories {
+    jcenter()
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = "4.2"
+}
+
+dependencies {
+    compile gradleApi()
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile gradleTestKit()
+    testCompile ('org.spockframework:spock-core:1.0-groovy-2.4') {
+        exclude group:'org.codehaus.groovy'
+    }
+
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    configurations = ['archives']
+    publish = true
+    pkg {
+        repo = 'maven'
+        name = 'gradle-wartremover'
+        desc = 'Gradle plugin to apply wartremover (Scala linting tool)'
+        licenses = ['MIT']
+        vcsUrl = 'https://github.com/augi/gradle-wartremover.git'
+        websiteUrl = 'https://github.com/augi/gradle-wartremover'
+        issueTrackerUrl = 'https://github.com/augi/gradle-wartremover/issues'
+        labels = ['gradle', 'scala', 'wartremover']
+        version {
+            name = project.version
+            vcsTag = project.version
+        }
+    }
+}
+
+project.ext.set('gradle.publish.key', System.getenv('GRADLE_PORTAL_KEY'))
+project.ext.set('gradle.publish.secret', System.getenv('GRADLE_PORTAL_SECRET'))
+pluginBundle {
+    website = 'https://github.com/augi/gradle-wartremover'
+    vcsUrl = 'https://github.com/augi/gradle-wartremover'
+    description = 'Gradle plugin to apply wartremover (Scala linting tool)'
+    tags = ['gradle', 'scala', 'wartremover']
+
+    plugins {
+        wartremoverPlugin {
+            id = 'cz.augi.gradle.wartremover'
+            displayName = 'Gradle wartremover plugin'
+        }
+    }
+}
