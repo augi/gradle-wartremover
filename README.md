@@ -24,3 +24,8 @@ Usage
 	    warningWarts.add('Product') // set of warts to use - violation causes warning; default is set of all stable warts
 	    excludedFiles.add('src/scala/me/project/Main.scala') // set of file to be excluded; default is empty
 	}
+
+It applies the wartremover plugin with this settings to all `ScalaCompile` tasks, so even the test code is checked.
+> "Keep your tests clean. Treat them as first-class citizens of the system."
+ [Robert C. Martin (Uncle Bob)](http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.html)
+ 
