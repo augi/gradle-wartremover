@@ -13,6 +13,9 @@ class WartremoverPluginTest extends Specification {
         project.repositories {
             jcenter()
         }
+        project.dependencies {
+            compile 'org.scala-lang:scala-library:2.12.3'
+        }
         project.evaluate()
         then:
         def compileTask = project.tasks.compileScala as ScalaCompile

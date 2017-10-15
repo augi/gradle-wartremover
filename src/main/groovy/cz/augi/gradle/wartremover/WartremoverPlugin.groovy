@@ -9,9 +9,10 @@ class WartremoverPlugin implements Plugin<Project> {
     void apply(Project project) {
         def extension = project.extensions.create('wartremover', WartremoverExtension)
         project.afterEvaluate {
+            def scalaVersion = getScalaVersion(project)
             def configuration = project.configurations.getByName('compileOnly')
-            project.dependencies.add(configuration.name, 'org.wartremover:wartremover_2.12:2.2.1')
-            File pluginFile = configuration.resolve().find { it.toString().toLowerCase().contains('wartremover_2.12') && it.toString().toLowerCase().endsWith('.jar') }
+            project.dependencies.add(configuration.name, "org.wartremover:wartremover_${scalaVersion}:2.2.1")
+            File pluginFile = configuration.resolve().find { it.toString().toLowerCase().contains("wartremover_${scalaVersion}") && it.toString().toLowerCase().endsWith('.jar') }
             if (pluginFile == null) {
                 throw new RuntimeException('Wartremover JAR cannot be found')
             }
@@ -25,6 +26,15 @@ class WartremoverPlugin implements Plugin<Project> {
                 scalaTask.scalaCompileOptions.additionalParameters.addAll(extension.excludedFiles.collect { getExludedFileDirective(project.file(it).canonicalPath) })
             }
         }
+    }
+
+    private String getScalaVersion(Project p) {
+        def scalaLibrary = p.configurations.getByName('compile').dependencies.find { it.group == 'org.scala-lang' && it.name == 'scala-library' }
+        if (!scalaLibrary) {
+            p.logger.warn('Scala library dependency not found in \'compile\' configuration, defaulting to 2.12')
+            return '2.12'
+        }
+        scalaLibrary.version.split('\\.').take(2).join('.') // 2.12.3 -> 2.12
     }
 
     private String getErrorWartDirective(String name) {
