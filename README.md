@@ -1,10 +1,10 @@
-# Gradle Wartremover Plugin
+# Gradle WartRemover Plugin
 
 [![Build Status](https://travis-ci.org/augi/gradle-wartremover.svg)](https://travis-ci.org/augi/gradle-wartremover) [ ![Download](https://api.bintray.com/packages/augi/maven/gradle-wartremover/images/download.svg) ](https://bintray.com/augi/maven/gradle-wartremover/_latestVersion)
 
-Gradle plugin to apply [wartremover](http://www.wartremover.org), the Scala linting tool.
+Gradle plugin to apply [WartRemover](http://www.wartremover.org), the Scala linting tool.
 
-It applies the wartremover plugin with same settings to all `ScalaCompile` tasks, so even the test code is checked.
+It applies the WartRemover plugin with same settings to all `ScalaCompile` tasks, so even the test code is checked.
 > "Keep your tests clean. Treat them as first-class citizens of the system."
  [Robert C. Martin (Uncle Bob)](http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.html)
 

@@ -60,7 +60,7 @@ bintray {
     pkg {
         repo = 'maven'
         name = 'gradle-wartremover'
-        desc = 'Gradle plugin to apply wartremover (Scala linting tool)'
+        desc = 'Gradle plugin to apply WartRemover (Scala linting tool)'
         licenses = ['MIT']
         vcsUrl = 'https://github.com/augi/gradle-wartremover.git'
         websiteUrl = 'https://github.com/augi/gradle-wartremover'
@@ -78,7 +78,7 @@ project.ext.set('gradle.publish.secret', System.getenv('GRADLE_PORTAL_SECRET'))
 pluginBundle {
     website = 'https://github.com/augi/gradle-wartremover'
     vcsUrl = 'https://github.com/augi/gradle-wartremover'
-    description = 'Gradle plugin to apply wartremover (Scala linting tool)'
+    description = 'Gradle plugin to apply WartRemover (Scala linting tool)'
     tags = ['gradle', 'scala', 'wartremover']
 
     plugins {
