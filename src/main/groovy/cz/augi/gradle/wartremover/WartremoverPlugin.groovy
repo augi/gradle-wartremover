@@ -21,9 +21,10 @@ class WartremoverPlugin implements Plugin<Project> {
                     scalaTask.scalaCompileOptions.additionalParameters = new ArrayList<String>()
                 }
                 scalaTask.scalaCompileOptions.additionalParameters.add("-Xplugin:${pluginFile.canonicalPath}".toString())
-                scalaTask.scalaCompileOptions.additionalParameters.addAll(extension.errorWarts.collect { getErrorWartDirective(it) })
-                scalaTask.scalaCompileOptions.additionalParameters.addAll(extension.warningWarts.collect { getWarningWartDirective(it) })
-                scalaTask.scalaCompileOptions.additionalParameters.addAll(extension.excludedFiles.collect { getExludedFileDirective(project.file(it).canonicalPath) })
+                WartremoverSettings settings = scalaTask.name.toLowerCase().contains('test') ? extension.getTest() : extension
+                scalaTask.scalaCompileOptions.additionalParameters.addAll(settings.errorWarts.collect { getErrorWartDirective(it) })
+                scalaTask.scalaCompileOptions.additionalParameters.addAll(settings.warningWarts.collect { getWarningWartDirective(it) })
+                scalaTask.scalaCompileOptions.additionalParameters.addAll(settings.excludedFiles.collect { getExludedFileDirective(project.file(it).canonicalPath) })
             }
         }
     }
