@@ -1,22 +1,14 @@
 package cz.augi.gradle.wartremover
 
-class WartremoverExtension {
-    Set<String> errorWarts = []
-    Set<String> warningWarts = ['Any',
-                                'AsInstanceOf',
-                                'DefaultArguments',
-                                'EitherProjectionPartial',
-                                'IsInstanceOf',
-                                'TraversableOps',
-                                'NonUnitStatements',
-                                'Null',
-                                'OptionPartial',
-                                'Product',
-                                'Return',
-                                'Serializable',
-                                'StringPlusAny',
-                                'Throw',
-                                'TryPartial',
-                                'Var']
-    Set<String> excludedFiles = []
+import org.gradle.util.ConfigureUtil
+
+class WartremoverExtension extends WartremoverSettings {
+    private WartremoverSettings testValue = this
+    void test(Closure closure) {
+        if (testValue == this) {
+            testValue = this.deepClone()
+        }
+        ConfigureUtil.configure(closure, testValue)
+    }
+    WartremoverSettings getTest() { testValue }
 }
