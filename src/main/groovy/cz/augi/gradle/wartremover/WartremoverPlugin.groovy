@@ -10,7 +10,7 @@ class WartremoverPlugin implements Plugin<Project> {
         def extension = project.extensions.create('wartremover', WartremoverExtension)
         project.afterEvaluate {
             def scalaVersion = getScalaVersion(project)
-            def configuration = project.configurations.getByName('compileOnly')
+            def configuration = project.configurations.create('wartremover')
             project.dependencies.add(configuration.name, "org.wartremover:wartremover_${scalaVersion}:2.2.1")
             File pluginFile = configuration.resolve().find { it.toString().toLowerCase().contains("wartremover_${scalaVersion}") && it.toString().toLowerCase().endsWith('.jar') }
             if (pluginFile == null) {
