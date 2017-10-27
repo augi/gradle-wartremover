@@ -35,7 +35,15 @@ class WartremoverPlugin implements Plugin<Project> {
             p.logger.warn('Scala library dependency not found in \'compile\' configuration, defaulting to 2.12')
             return '2.12'
         }
+        if (!isValidScalaVersion(scalaLibrary.version)) {
+            p.logger.warn("Invalid Scala library version ('${scalaLibrary.version}'), defaulting to 2.12")
+            return '2.12'
+        }
         scalaLibrary.version.split('\\.').take(2).join('.') // 2.12.3 -> 2.12
+    }
+
+    private boolean isValidScalaVersion(String scalaVersion) {
+        scalaVersion.contains('.') && scalaVersion.chars.any { it.digit } && !scalaVersion.contains('?')
     }
 
     private String getErrorWartDirective(String name) {
