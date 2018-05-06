@@ -24,10 +24,6 @@ repositories {
     jcenter()
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.4'
-}
-
 dependencies {
     compile gradleApi()
 
