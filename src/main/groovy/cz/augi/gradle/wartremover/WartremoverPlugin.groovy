@@ -11,7 +11,7 @@ class WartremoverPlugin implements Plugin<Project> {
         project.afterEvaluate {
             def scalaVersion = getScalaVersion(project)
             def configuration = project.configurations.create('wartremover')
-            project.dependencies.add(configuration.name, "org.wartremover:wartremover_${scalaVersion}:2.3.6")
+            project.dependencies.add(configuration.name, "org.wartremover:wartremover_${scalaVersion}:2.3.7")
             File pluginFile = configuration.resolve().find { it.toString().toLowerCase().contains("wartremover_${scalaVersion}") && it.toString().toLowerCase().endsWith('.jar') }
             if (pluginFile == null) {
                 throw new RuntimeException('Wartremover JAR cannot be found')
