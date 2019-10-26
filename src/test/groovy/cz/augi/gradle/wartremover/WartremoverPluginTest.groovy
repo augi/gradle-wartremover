@@ -24,11 +24,28 @@ class WartremoverPluginTest extends Specification {
         }
         project.evaluate()
         then:
+        assert project.configurations.getByName("wartremover").dependencies.find { it.name == 'wartremover_2.12' }
         def compileTask = project.tasks.compileScala as ScalaCompile
-        compileTask.scalaCompileOptions.additionalParameters.find { it.contains('MyProduction') }
-        !compileTask.scalaCompileOptions.additionalParameters.find { it.contains('MyTest') }
+        assert compileTask.scalaCompileOptions.additionalParameters.find { it.contains('MyProduction') }
+        assert !compileTask.scalaCompileOptions.additionalParameters.find { it.contains('MyTest') }
         def compileTestTask = project.tasks.compileTestScala as ScalaCompile
-        compileTestTask.scalaCompileOptions.additionalParameters.find { it.contains('MyProduction') }
-        compileTestTask.scalaCompileOptions.additionalParameters.find { it.contains('MyTest') }
+        assert compileTestTask.scalaCompileOptions.additionalParameters.find { it.contains('MyProduction') }
+        assert compileTestTask.scalaCompileOptions.additionalParameters.find { it.contains('MyTest') }
+    }
+
+    def "should infer compilation target correctly from different compile configurations"() {
+        def project = ProjectBuilder.builder().build()
+        when:
+        project.plugins.apply 'scala'
+        project.plugins.apply 'wartremover'
+        project.repositories {
+            jcenter()
+        }
+        project.dependencies {
+            implementation 'org.scala-lang:scala-library:2.11.12'
+        }
+        project.evaluate()
+        then:
+        assert project.configurations.getByName("wartremover").dependencies.find { it.name == 'wartremover_2.11' }
     }
 }
