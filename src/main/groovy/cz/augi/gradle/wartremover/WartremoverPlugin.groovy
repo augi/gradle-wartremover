@@ -30,9 +30,12 @@ class WartremoverPlugin implements Plugin<Project> {
     }
 
     private String getScalaVersion(Project p) {
-        def scalaLibrary = p.configurations.getByName('compile').dependencies.find { it.group == 'org.scala-lang' && it.name == 'scala-library' }
+        def scalaLibrary = p.configurations
+                .findAll { ['compile', 'api', 'implementation'].contains(it.name) }
+                .collectMany { it.dependencies }
+                .find { it.group == 'org.scala-lang' && it.name == 'scala-library' }
         if (!scalaLibrary) {
-            p.logger.warn('Scala library dependency not found in \'compile\' configuration, defaulting to 2.12')
+            p.logger.warn('Scala library dependency not found in \'compile\' configurations, defaulting to 2.12')
             return '2.12'
         }
         if (!isValidScalaVersion(scalaLibrary.version)) {
