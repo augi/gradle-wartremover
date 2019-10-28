@@ -9,10 +9,9 @@ class WartremoverPlugin implements Plugin<Project> {
     void apply(Project project) {
         def extension = project.extensions.create('wartremover', WartremoverExtension)
         project.afterEvaluate {
-            def scalaVersion = getScalaVersion(project)
             def configuration = project.configurations.create('wartremover')
-            project.dependencies.add(configuration.name, "org.wartremover:wartremover_${scalaVersion}:2.4.2")
-            File pluginFile = configuration.resolve().find { it.toString().toLowerCase().contains("wartremover_${scalaVersion}") && it.toString().toLowerCase().endsWith('.jar') }
+            project.dependencies.add(configuration.name, "org.wartremover:wartremover_${getWartremoverArtifactSuffix(project)}")
+            File pluginFile = configuration.resolve().find { it.toString().toLowerCase().contains("wartremover_") && it.toString().toLowerCase().endsWith('.jar') }
             if (pluginFile == null) {
                 throw new RuntimeException('Wartremover JAR cannot be found')
             }
@@ -29,24 +28,38 @@ class WartremoverPlugin implements Plugin<Project> {
         }
     }
 
+    private String getWartremoverArtifactSuffix(Project p) {
+        String scalaVersion = getScalaVersion(p)
+        String scalaMajorVersion = scalaVersion.split('\\.').take(2).join('.') // 2.12.3 -> 2.12
+        Integer scalaMinorVersion = scalaVersion.split('\\.').takeRight(1).join('').toInteger() // 2.12.3 -> 3
+        if (scalaMajorVersion == '2.10') '2.10:2.3.7'
+        else if (scalaMajorVersion == '2.11') {
+            scalaMinorVersion >= 12 ? "$scalaVersion:2.4.3" : '2.11:2.4.2'
+        } else if (scalaMajorVersion == '2.12') {
+            scalaMinorVersion >= 8 ? "$scalaVersion:2.4.3" : '2.12:2.4.2'
+        } else if (scalaMajorVersion == 2.13) {
+            "$scalaVersion:2.4.3"
+        } else {
+            throw new RuntimeException("Unsupported Scala version: $scalaVersion")
+        }
+    }
+
     private String getScalaVersion(Project p) {
         def scalaLibrary = p.configurations
                 .findAll { ['compile', 'api', 'implementation'].contains(it.name) }
                 .collectMany { it.dependencies }
                 .find { it.group == 'org.scala-lang' && it.name == 'scala-library' }
         if (!scalaLibrary) {
-            p.logger.warn('Scala library dependency not found in \'compile\' configurations, defaulting to 2.12')
-            return '2.12'
+            throw new RuntimeException('Scala library dependency not found')
         }
-        if (!isValidScalaVersion(scalaLibrary.version)) {
-            p.logger.warn("Invalid Scala library version ('${scalaLibrary.version}'), defaulting to 2.12")
-            return '2.12'
-        }
-        scalaLibrary.version.split('\\.').take(2).join('.') // 2.12.3 -> 2.12
+        checkValidScalaVersion(scalaLibrary.version)
+        scalaLibrary.version
     }
 
-    private boolean isValidScalaVersion(String scalaVersion) {
-        scalaVersion.contains('.') && scalaVersion.chars.any { it.digit } && !scalaVersion.contains('?')
+    private void checkValidScalaVersion(String scalaVersion) {
+        if (!scalaVersion.contains('.') || !scalaVersion.chars.any { it.digit } || scalaVersion.contains('?')) {
+            throw new RuntimeException("Invalid Scala library version: $scalaVersion")
+        }
     }
 
     private String getErrorWartDirective(String name) {

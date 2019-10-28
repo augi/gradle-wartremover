@@ -46,6 +46,6 @@ class WartremoverPluginTest extends Specification {
         }
         project.evaluate()
         then:
-        assert project.configurations.getByName("wartremover").dependencies.find { it.name == 'wartremover_2.11' }
+        assert project.configurations.getByName("wartremover").dependencies.find { it.name == 'wartremover_2.11.12' }
     }
 }
