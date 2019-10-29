@@ -35,6 +35,8 @@ dependencies {
 
 }
 
+sourceCompatibility = JavaVersion.VERSION_1_8
+
 task sourcesJar(type: Jar) {
     from sourceSets.main.allSource
     archiveClassifier = 'sources'
