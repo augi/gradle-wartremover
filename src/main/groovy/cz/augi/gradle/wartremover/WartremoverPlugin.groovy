@@ -37,7 +37,7 @@ class WartremoverPlugin implements Plugin<Project> {
             scalaMinorVersion >= 12 ? "$scalaVersion:2.4.3" : '2.11:2.4.2'
         } else if (scalaMajorVersion == '2.12') {
             scalaMinorVersion >= 8 ? "$scalaVersion:2.4.3" : '2.12:2.4.2'
-        } else if (scalaMajorVersion == 2.13) {
+        } else if (scalaMajorVersion == '2.13') {
             "$scalaVersion:2.4.3"
         } else {
             throw new RuntimeException("Unsupported Scala version: $scalaVersion")
