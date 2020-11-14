@@ -19,12 +19,14 @@ class WartremoverSettings {
                                 'TryPartial',
                                 'Var']
     Set<String> excludedFiles = []
+    Set<String> additionalWarts = []
 
     WartremoverSettings deepClone() {
         def r = new WartremoverSettings()
         r.errorWarts = this.errorWarts.toSet()
         r.warningWarts = this.warningWarts.toSet()
         r.excludedFiles = this.excludedFiles.toSet()
+        r.additionalWarts = this.additionalWarts.toSet()
         r
     }
 }
