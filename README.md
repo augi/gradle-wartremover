@@ -29,10 +29,12 @@ Usage
 	    errorWarts.add('Product') // set of warts to use - violation causes error; default is empty set
 	    warningWarts.add('Product') // set of warts to use - violation causes warning; default is set of all stable warts
 	    excludedFiles.add('src/main/scala/me/project/Main.scala') // set of file to be excluded; default is empty
+        classPaths.add(new File("path/to/yourWarts").toURI().toURL().toString()) // set of files or directories to be added to the classpath if using custom warts; default is empty
 	    test {
 	        errorWarts.add('Serializable') // set of warts to use - violation causes error; default settings from the block above
             warningWarts.add('Serializable') // set of warts to use - violation causes warning; default settings from the block above
             excludedFiles.add('src/test/scala/me/project/Test.scala') // set of file to be excluded; default settings from the block above
+            classPaths.add(new File("path/to/yourTestWarts").toURI().toURL().toString()) // set of files or directories to be added to the classpath if using custom warts; default settings from the block above
 	    }
 	}
 	

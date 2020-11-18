@@ -24,6 +24,8 @@ class WartremoverPlugin implements Plugin<Project> {
                 scalaTask.scalaCompileOptions.additionalParameters.addAll(settings.errorWarts.collect { getErrorWartDirective(it) })
                 scalaTask.scalaCompileOptions.additionalParameters.addAll(settings.warningWarts.collect { getWarningWartDirective(it) })
                 scalaTask.scalaCompileOptions.additionalParameters.addAll(settings.excludedFiles.collect { getExludedFileDirective(project.file(it).canonicalPath) })
+
+                scalaTask.scalaCompileOptions.additionalParameters.addAll(settings.classPaths.collect { getClasspathDirective(it) })
             }
         }
     }
@@ -78,5 +80,9 @@ class WartremoverPlugin implements Plugin<Project> {
 
     private String getExludedFileDirective(String absoluteFileName) {
         '-P:wartremover:excluded:' + absoluteFileName
+    }
+
+    private String getClasspathDirective(String classpath) {
+        '-P:wartremover:cp:' + classpath
     }
 }
