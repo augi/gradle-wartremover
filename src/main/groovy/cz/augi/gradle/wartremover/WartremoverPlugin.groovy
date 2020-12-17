@@ -36,11 +36,11 @@ class WartremoverPlugin implements Plugin<Project> {
         Integer scalaMinorVersion = scalaVersion.split('\\.').takeRight(1).join('').toInteger() // 2.12.3 -> 3
         if (scalaMajorVersion == '2.10') '2.10:2.3.7'
         else if (scalaMajorVersion == '2.11') {
-            scalaMinorVersion >= 12 ? "$scalaVersion:2.4.10" : '2.11:2.4.2'
+            scalaMinorVersion >= 12 ? "$scalaVersion:2.4.13" : '2.11:2.4.2'
         } else if (scalaMajorVersion == '2.12') {
-            scalaMinorVersion >= 8 ? "$scalaVersion:2.4.10" : '2.12:2.4.2'
+            scalaMinorVersion >= 8 ? "$scalaVersion:2.4.13" : '2.12:2.4.2'
         } else if (scalaMajorVersion == '2.13') {
-            "$scalaVersion:2.4.10"
+            "$scalaVersion:2.4.13"
         } else {
             throw new RuntimeException("Unsupported Scala version: $scalaVersion")
         }
