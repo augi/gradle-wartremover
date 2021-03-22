@@ -1,6 +1,4 @@
-# Gradle WartRemover Plugin
-
-[![Build Status](https://travis-ci.org/augi/gradle-wartremover.svg)](https://travis-ci.org/augi/gradle-wartremover) [ ![Download](https://api.bintray.com/packages/augi/maven/gradle-wartremover/images/download.svg) ](https://bintray.com/augi/maven/gradle-wartremover/_latestVersion)
+# Gradle WartRemover Plugin [![Build](https://github.com/augi/gradle-wartremover/actions/workflows/build.yml/badge.svg)](https://github.com/augi/gradle-wartremover/actions/workflows/build.yml)
 
 Gradle plugin to apply [WartRemover](http://www.wartremover.org), the Scala linting tool.
 
@@ -12,18 +10,12 @@ If you want to have different settings for tests then you can use the `test` blo
  If you don't use `test` block then all the settings is applied to all the Scala code.
 
 Usage
-====================
+=====
+The plugin is published to [Gradle Plugins portal](https://plugins.gradle.org/plugin/cz.augi.gradle.wartremover)
 
-	buildscript {
-		repositories {
-			jcenter()
-		}
-		dependencies {
-			classpath 'cz.augi:gradle-wartremover:putCurrentVersionHere'
-		}
-	}
-
-	apply plugin: 'wartremover'
+    plugins {
+      id 'cz.augi.gradle.wartremover' version 'putCurrentVersionHere'
+    }
 	
 	wartremover {
 	    errorWarts.add('Product') // set of warts to use - violation causes error; default is empty set
@@ -37,9 +29,3 @@ Usage
             classPaths.add(new File("path/to/yourTestWarts").toURI().toURL().toString()) // set of files or directories to be added to the classpath if using custom warts; default settings from the block above
 	    }
 	}
-	
-The plugin can be also applied using [the new Gradle syntax](https://plugins.gradle.org/plugin/cz.augi.gradle.wartremover):
-
-    plugins {
-      id 'cz.augi.gradle.wartremover' version 'putCurrentVersionHere'
-    }
