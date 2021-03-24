@@ -1,9 +1,11 @@
 plugins {
+    id 'groovy'
+    id 'maven-publish'
     id 'java-gradle-plugin'
+    id 'signing'
+    id 'io.github.gradle-nexus.publish-plugin' version '1.0.0'
     id 'com.gradle.plugin-publish' version '0.13.0'
 }
-
-apply plugin: 'groovy'
 
 group 'cz.augi'
 version = version == 'unspecified' ? 'DEVELOPER-SNAPSHOT' : version
@@ -37,6 +39,57 @@ pluginBundle {
         wartremoverPlugin {
             id = 'cz.augi.gradle.wartremover'
             displayName = 'Gradle wartremover plugin'
+        }
+    }
+}
+
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+afterEvaluate {
+    publishing.publications.forEach {
+        it.pom {
+            name = 'Gradle WartRemover Plugin'
+            description = 'Gradle plugin to apply WartRemover (Scala linting tool)'
+            url = 'https://github.com/augi/gradle-wartremover'
+            licenses {
+                license {
+                    name = 'The MIT License'
+                    url = 'http://www.opensource.org/licenses/mit-license.php'
+                }
+            }
+            developers {
+                developer {
+                    id = 'augi'
+                    name = 'Michal Augustýn'
+                    email = 'augustyn.michal@gmail.com'
+                }
+            }
+            scm {
+                connection = 'scm:git:git://github.com/augi/gradle-wartremover.git'
+                developerConnection = 'scm:git:ssh://github.com/augi/gradle-wartremover.git'
+                url = 'https://github.com/augi/gradle-wartremover'
+            }
+        }
+    }
+}
+
+signing {
+    String base64Key = System.getenv('SIGNING_KEY')
+    if (base64Key) {
+        useInMemoryPgpKeys(new String(Base64.decoder.decode(base64Key)), System.getenv('SIGNING_PASSWORD'))
+        sign publishing.publications
+    }
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
         }
     }
 }
