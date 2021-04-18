@@ -1,4 +1,4 @@
-# Gradle WartRemover Plugin [![Build](https://github.com/augi/gradle-wartremover/actions/workflows/build.yml/badge.svg)](https://github.com/augi/gradle-wartremover/actions/workflows/build.yml)
+# Gradle WartRemover Plugin [![Build](https://github.com/augi/gradle-wartremover/actions/workflows/build.yml/badge.svg)](https://github.com/augi/gradle-wartremover/actions/workflows/build.yml) [![Version](https://badgen.net/maven/v/maven-central/cz.augi/gradle-wartremover)](https://repo1.maven.org/maven2/cz/augi/gradle-wartremover/)
 
 Gradle plugin to apply [WartRemover](http://www.wartremover.org), the Scala linting tool.
 
