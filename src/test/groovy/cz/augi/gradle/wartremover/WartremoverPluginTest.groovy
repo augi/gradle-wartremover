@@ -11,10 +11,10 @@ class WartremoverPluginTest extends Specification {
         project.plugins.apply 'scala'
         project.plugins.apply 'wartremover'
         project.repositories {
-            jcenter()
+            mavenCentral()
         }
         project.dependencies {
-            compile 'org.scala-lang:scala-library:2.12.3'
+            implementation 'org.scala-lang:scala-library:2.12.3'
         }
         project.wartremover {
             warningWarts.add('MyProduction')
@@ -39,7 +39,7 @@ class WartremoverPluginTest extends Specification {
         project.plugins.apply 'scala'
         project.plugins.apply 'wartremover'
         project.repositories {
-            jcenter()
+            mavenCentral()
         }
         project.dependencies {
             implementation 'org.scala-lang:scala-library:2.11.12'
