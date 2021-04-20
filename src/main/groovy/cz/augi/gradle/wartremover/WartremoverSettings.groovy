@@ -1,5 +1,8 @@
 package cz.augi.gradle.wartremover
 
+import groovy.transform.CompileStatic
+
+@CompileStatic
 class WartremoverSettings {
     Set<String> errorWarts = []
     Set<String> warningWarts = ['Any',
@@ -17,7 +20,7 @@ class WartremoverSettings {
                                 'StringPlusAny',
                                 'Throw',
                                 'TryPartial',
-                                'Var']
+                                'Var'].toSet()
     Set<String> excludedFiles = []
     Set<String> classPaths = []
 
