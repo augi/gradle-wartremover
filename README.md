@@ -9,6 +9,8 @@ It applies the WartRemover plugin with same settings to all `ScalaCompile` tasks
 If you want to have different settings for tests then you can use the `test` block as shown below.
  If you don't use `test` block then all the settings is applied to all the Scala code.
 
+> Please note that since `0.15.0` version at least Gradle 6.4 is required (because the plugin uses `scalaCompilerPlugins` configuration).
+
 Usage
 =====
 The plugin is published to [Gradle Plugins portal](https://plugins.gradle.org/plugin/cz.augi.gradle.wartremover)
