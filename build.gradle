@@ -40,7 +40,7 @@ pluginBundle {
     website = 'https://github.com/augi/gradle-wartremover'
     vcsUrl = 'https://github.com/augi/gradle-wartremover'
     description = 'Gradle plugin to apply WartRemover (Scala linting tool)'
-    tags = ['gradle', 'scala', 'wartremover']
+    tags = ['scala', 'wartremover']
 
     plugins {
         wartremoverPlugin {
