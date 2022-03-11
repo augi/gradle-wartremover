@@ -9,17 +9,11 @@ class WartremoverPlugin implements Plugin<Project> {
     void apply(Project project) {
         def extension = project.extensions.create('wartremover', WartremoverExtension)
         project.afterEvaluate {
-            def configuration = project.configurations.create('wartremover')
-            project.dependencies.add(configuration.name, "org.wartremover:wartremover_${getWartremoverArtifactSuffix(project)}")
-            File pluginFile = configuration.resolve().find { it.toString().toLowerCase().contains("wartremover_") && it.toString().toLowerCase().endsWith('.jar') }
-            if (pluginFile == null) {
-                throw new RuntimeException('Wartremover JAR cannot be found')
-            }
+            project.dependencies { scalaCompilerPlugins "org.wartremover:wartremover_${getWartremoverArtifactSuffix(project)}" }
             project.tasks.withType(ScalaCompile).all { scalaTask ->
                 if (scalaTask.scalaCompileOptions.additionalParameters == null) {
                     scalaTask.scalaCompileOptions.additionalParameters = new ArrayList<String>()
                 }
-                scalaTask.scalaCompileOptions.additionalParameters.add("-Xplugin:${pluginFile.canonicalPath}".toString())
                 WartremoverSettings settings = scalaTask.name.toLowerCase().contains('test') ? extension.getTest() : extension
                 scalaTask.scalaCompileOptions.additionalParameters.addAll(settings.errorWarts.collect { getErrorWartDirective(it) })
                 scalaTask.scalaCompileOptions.additionalParameters.addAll(settings.warningWarts.collect { getWarningWartDirective(it) })

@@ -14,7 +14,7 @@ class WartremoverPluginTest extends Specification {
             mavenCentral()
         }
         project.dependencies {
-            implementation 'org.scala-lang:scala-library:2.12.3'
+            implementation 'org.scala-lang:scala-library:2.12.15'
         }
         project.wartremover {
             warningWarts.add('MyProduction')
@@ -24,7 +24,7 @@ class WartremoverPluginTest extends Specification {
         }
         project.evaluate()
         then:
-        assert project.configurations.getByName("wartremover").dependencies.find { it.name == 'wartremover_2.12' }
+        assert project.configurations.getByName('scalaCompilerPlugins').dependencies.find { it.name == 'wartremover_2.12.15' }
         def compileTask = project.tasks.compileScala as ScalaCompile
         assert compileTask.scalaCompileOptions.additionalParameters.find { it.contains('MyProduction') }
         assert !compileTask.scalaCompileOptions.additionalParameters.find { it.contains('MyTest') }
@@ -46,6 +46,6 @@ class WartremoverPluginTest extends Specification {
         }
         project.evaluate()
         then:
-        assert project.configurations.getByName("wartremover").dependencies.find { it.name == 'wartremover_2.11.12' }
+        assert project.configurations.getByName('scalaCompilerPlugins').dependencies.find { it.name == 'wartremover_2.11.12' }
     }
 }
