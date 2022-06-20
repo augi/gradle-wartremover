@@ -10,7 +10,7 @@ class WartremoverPlugin implements Plugin<Project> {
         def extension = project.extensions.create('wartremover', WartremoverExtension)
         project.afterEvaluate {
             project.dependencies { scalaCompilerPlugins "org.wartremover:wartremover_${getWartremoverArtifactSuffix(project)}" }
-            project.tasks.withType(ScalaCompile).all { scalaTask ->
+            project.tasks.withType(ScalaCompile).configureEach { scalaTask ->
                 if (scalaTask.scalaCompileOptions.additionalParameters == null) {
                     scalaTask.scalaCompileOptions.additionalParameters = new ArrayList<String>()
                 }
