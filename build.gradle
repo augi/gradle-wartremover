@@ -4,7 +4,7 @@ plugins {
     id 'java-gradle-plugin'
     id 'signing'
     id 'io.github.gradle-nexus.publish-plugin' version '1.1.0'
-    id 'com.gradle.plugin-publish' version '0.21.0'
+    id 'com.gradle.plugin-publish' version '1.0.0'
 }
 
 group 'cz.augi'
@@ -39,13 +39,15 @@ project.ext.set('gradle.publish.secret', System.getenv('GRADLE_PORTAL_SECRET'))
 pluginBundle {
     website = 'https://github.com/augi/gradle-wartremover'
     vcsUrl = 'https://github.com/augi/gradle-wartremover'
-    description = 'Gradle plugin to apply WartRemover (Scala linting tool)'
     tags = ['scala', 'wartremover']
-
+}
+gradlePlugin {
     plugins {
         wartremoverPlugin {
             id = 'cz.augi.gradle.wartremover'
             displayName = 'Gradle wartremover plugin'
+            description = 'Gradle plugin to apply WartRemover (Scala linting tool)'
+            implementationClass = 'cz.augi.gradle.wartremover.WartremoverPlugin'
         }
     }
 }
