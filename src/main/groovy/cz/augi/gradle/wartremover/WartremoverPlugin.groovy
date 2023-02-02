@@ -11,15 +11,18 @@ class WartremoverPlugin implements Plugin<Project> {
         project.afterEvaluate {
             project.dependencies { scalaCompilerPlugins "org.wartremover:wartremover_${getWartremoverArtifactSuffix(project)}" }
             project.tasks.withType(ScalaCompile).configureEach { scalaTask ->
-                if (scalaTask.scalaCompileOptions.additionalParameters == null) {
-                    scalaTask.scalaCompileOptions.additionalParameters = new ArrayList<String>()
+                List<String> updatedParameters = new ArrayList<>()
+                if (scalaTask.scalaCompileOptions.additionalParameters != null) {
+                    updatedParameters.addAll(scalaTask.scalaCompileOptions.additionalParameters)
                 }
                 WartremoverSettings settings = scalaTask.name.toLowerCase().contains('test') ? extension.getTest() : extension
-                scalaTask.scalaCompileOptions.additionalParameters.addAll(settings.errorWarts.collect { getErrorWartDirective(it) })
-                scalaTask.scalaCompileOptions.additionalParameters.addAll(settings.warningWarts.collect { getWarningWartDirective(it) })
-                scalaTask.scalaCompileOptions.additionalParameters.addAll(settings.excludedFiles.collect { getExludedFileDirective(project.file(it).canonicalPath) })
+                updatedParameters.addAll(settings.errorWarts.collect { getErrorWartDirective(it) })
+                updatedParameters.addAll(settings.warningWarts.collect { getWarningWartDirective(it) })
+                updatedParameters.addAll(settings.excludedFiles.collect { getExludedFileDirective(project.file(it).canonicalPath) })
 
-                scalaTask.scalaCompileOptions.additionalParameters.addAll(settings.classPaths.collect { getClasspathDirective(it) })
+                updatedParameters.addAll(settings.classPaths.collect { getClasspathDirective(it) })
+
+                scalaTask.scalaCompileOptions.additionalParameters = updatedParameters
             }
         }
     }
