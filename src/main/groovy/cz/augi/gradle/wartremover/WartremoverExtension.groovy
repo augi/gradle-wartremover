@@ -1,7 +1,6 @@
 package cz.augi.gradle.wartremover
 
 import groovy.transform.CompileStatic
-import org.gradle.util.ConfigureUtil
 
 @CompileStatic
 class WartremoverExtension extends WartremoverSettings {
@@ -10,7 +9,14 @@ class WartremoverExtension extends WartremoverSettings {
         if (testValue == this) {
             testValue = this.deepClone()
         }
-        ConfigureUtil.configure(closure, testValue)
+        def closureToCall = (Closure)closure.clone()
+        closureToCall.setResolveStrategy(Closure.DELEGATE_FIRST)
+        closureToCall.setDelegate(testValue)
+        if (closureToCall.getMaximumNumberOfParameters() == 0) {
+            closureToCall.call()
+        } else {
+            closureToCall.call(testValue)
+        }
     }
     WartremoverSettings getTest() { testValue }
 }
