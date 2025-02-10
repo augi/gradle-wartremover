@@ -2,12 +2,19 @@ package cz.augi.gradle.wartremover
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.scala.ScalaCompile
 
 class WartremoverPlugin implements Plugin<Project> {
+
+    static final String wartremoverVersionScala210 = '2.3.7'
+    static final String wartremoverVersionScala211 = '2.4.21'
+    // Below can be 3.x, but TraversableOps was renamed to IterableOps. Current default WartremoverSettings are incompatible
+    static final String wartremoverVersionScala212Plus = '2.4.21'
+
     @Override
     void apply(Project project) {
-        def extension = project.extensions.create('wartremover', WartremoverExtension)
+        WartremoverExtension extension = project.extensions.create('wartremover', WartremoverExtension, project)
         project.afterEvaluate {
             project.dependencies { scalaCompilerPlugins "org.wartremover:wartremover_${getWartremoverArtifactSuffix(project)}" }
             project.tasks.withType(ScalaCompile).configureEach { scalaTask ->
@@ -18,8 +25,7 @@ class WartremoverPlugin implements Plugin<Project> {
                 WartremoverSettings settings = scalaTask.name.toLowerCase().contains('test') ? extension.getTest() : extension
                 updatedParameters.addAll(settings.errorWarts.collect { getErrorWartDirective(it) })
                 updatedParameters.addAll(settings.warningWarts.collect { getWarningWartDirective(it) })
-                updatedParameters.addAll(settings.excludedFiles.collect { getExludedFileDirective(project.file(it).canonicalPath) })
-
+                updatedParameters.addAll(settings.excludedFiles.collect { getExcludedFileDirective(project.file(it).canonicalPath) })
                 updatedParameters.addAll(settings.classPaths.collect { getClasspathDirective(it) })
 
                 scalaTask.scalaCompileOptions.additionalParameters = updatedParameters
@@ -27,23 +33,27 @@ class WartremoverPlugin implements Plugin<Project> {
         }
     }
 
-    private String getWartremoverArtifactSuffix(Project p) {
+    private static String getWartremoverArtifactSuffix(Project p) {
+        Property<String> wartremoverVersionProperty = p.extensions.wartremover.wartremoverVersion
         String scalaVersion = getScalaVersion(p)
-        String scalaMajorVersion = scalaVersion.split('\\.').take(2).join('.') // 2.12.3 -> 2.12
-        Integer scalaMinorVersion = scalaVersion.split('\\.').takeRight(1).join('').toInteger() // 2.12.3 -> 3
-        if (scalaMajorVersion == '2.10') '2.10:2.3.7'
-        else if (scalaMajorVersion == '2.11') {
-            scalaMinorVersion >= 12 ? "$scalaVersion:2.4.21" : '2.11:2.4.16'
-        } else if (scalaMajorVersion == '2.12') {
-            scalaMinorVersion >= 10 ? "$scalaVersion:2.4.21" : (scalaMinorVersion >= 8 ? "$scalaVersion:2.4.13" : '2.12:2.4.16')
-        } else if (scalaMajorVersion == '2.13') {
-            "$scalaVersion:2.4.21"
+
+        if (wartremoverVersionProperty.isPresent()) "$scalaVersion:${wartremoverVersionProperty.get()}"
+        else if (scalaVersion.startsWith('2.10')) "$scalaVersion:$wartremoverVersionScala210"
+        else if (scalaVersion.startsWith('2.11')) "$scalaVersion:$wartremoverVersionScala211"
+        else if (scalaVersion.startsWithAny('2.12', '2.13')) "$scalaVersion:$wartremoverVersionScala212Plus"
+        else throw new RuntimeException("Unsupported Scala version: $scalaVersion")
+    }
+
+    private static String getScalaVersion(Project p) {
+        Property<String> scalaVersionProperty = p.extensions.wartremover.scalaVersion
+        if (scalaVersionProperty.isPresent()) {
+            return checkValidScalaVersion(scalaVersionProperty.get()) // Uses full Scala version when defined by user
         } else {
-            throw new RuntimeException("Unsupported Scala version: $scalaVersion")
+            return checkValidScalaVersion(getScalaVersionFromProject(p))
         }
     }
 
-    private String getScalaVersion(Project p) {
+    private static String getScalaVersionFromProject(Project p) {
         def scalaLibrary = p.configurations
                 .findAll { ['compile', 'api', 'implementation'].contains(it.name) }
                 .collectMany { it.dependencies }
@@ -51,35 +61,36 @@ class WartremoverPlugin implements Plugin<Project> {
         if (!scalaLibrary) {
             throw new RuntimeException('Scala library dependency not found')
         }
-        checkValidScalaVersion(scalaLibrary.version)
-        scalaLibrary.version
+        return scalaLibrary.version.split('\\.').take(2).join('.') // 2.13.16 -> 2.13
     }
 
-    private void checkValidScalaVersion(String scalaVersion) {
+    private static String checkValidScalaVersion(String scalaVersion) {
         if (!scalaVersion.contains('.') || !scalaVersion.chars.any { it.digit } || scalaVersion.contains('?')) {
             throw new RuntimeException("Invalid Scala library version: $scalaVersion")
+        } else {
+            return scalaVersion
         }
     }
 
-    private String getErrorWartDirective(String name) {
+    private static String getErrorWartDirective(String name) {
         if (!name.contains('.')) {
             name = 'org.wartremover.warts.' + name
         }
         '-P:wartremover:traverser:' + name
     }
 
-    private String getWarningWartDirective(String name) {
+    private static String getWarningWartDirective(String name) {
         if (!name.contains('.')) {
             name = 'org.wartremover.warts.' + name
         }
         '-P:wartremover:only-warn-traverser:' + name
     }
 
-    private String getExludedFileDirective(String absoluteFileName) {
+    private static String getExcludedFileDirective(String absoluteFileName) {
         '-P:wartremover:excluded:' + absoluteFileName
     }
 
-    private String getClasspathDirective(String classpath) {
+    private static String getClasspathDirective(String classpath) {
         '-P:wartremover:cp:' + classpath
     }
 }

@@ -1,10 +1,12 @@
 package cz.augi.gradle.wartremover
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Project
 
 @CompileStatic
 class WartremoverExtension extends WartremoverSettings {
     private WartremoverSettings testValue = this
+    final Project project
     void test(Closure closure) {
         if (testValue == this) {
             testValue = this.deepClone()
@@ -19,4 +21,10 @@ class WartremoverExtension extends WartremoverSettings {
         }
     }
     WartremoverSettings getTest() { testValue }
+
+    WartremoverExtension(Project project) {
+        this.project = project
+        scalaVersion = project.objects.property(String)
+        wartremoverVersion = project.objects.property(String)
+    }
 }
