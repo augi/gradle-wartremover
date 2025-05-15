@@ -83,7 +83,7 @@ afterEvaluate {
         }
         repositories {
             maven {
-                url = layout.buildDirectory.dir('for-deploy')
+                url = layout.buildDirectory.dir('staging-deploy')
             }
         }
     }
