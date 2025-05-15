@@ -55,34 +55,36 @@ gradlePlugin {
 }
 
 afterEvaluate {
-    publishing.publications.forEach {
-        it.pom {
-            name = 'Gradle WartRemover Plugin'
-            description = 'Gradle plugin to apply WartRemover (Scala linting tool)'
-            url = 'https://github.com/augi/gradle-wartremover'
-            licenses {
-                license {
-                    name = 'The MIT License'
-                    url = 'http://www.opensource.org/licenses/mit-license.php'
-                }
-            }
-            developers {
-                developer {
-                    id = 'augi'
-                    name = 'Michal Augustýn'
-                    email = 'augustyn.michal@gmail.com'
-                }
-            }
-            scm {
-                connection = 'scm:git:git://github.com/augi/gradle-wartremover.git'
-                developerConnection = 'scm:git:ssh://github.com/augi/gradle-wartremover.git'
+    publishing {
+        publications.forEach {
+            it.pom {
+                name = 'Gradle WartRemover Plugin'
+                description = 'Gradle plugin to apply WartRemover (Scala linting tool)'
                 url = 'https://github.com/augi/gradle-wartremover'
+                licenses {
+                    license {
+                        name = 'The MIT License'
+                        url = 'http://www.opensource.org/licenses/mit-license.php'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'augi'
+                        name = 'Michal Augustýn'
+                        email = 'augustyn.michal@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/augi/gradle-wartremover.git'
+                    developerConnection = 'scm:git:ssh://github.com/augi/gradle-wartremover.git'
+                    url = 'https://github.com/augi/gradle-wartremover'
+                }
             }
         }
-    }
-    repositories {
-        maven {
-            url = layout.buildDirectory.dir('staging-deploy')
+        repositories {
+            maven {
+                url = layout.buildDirectory.dir('for-deploy')
+            }
         }
     }
 }
@@ -109,6 +111,11 @@ jreleaser {
                     stagingRepository('build/staging-deploy')
                 }
             }
+        }
+    }
+    release {
+        github {
+            enabled = false
         }
     }
 }
