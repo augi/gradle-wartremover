@@ -9,8 +9,7 @@ class WartremoverPlugin implements Plugin<Project> {
 
     static final String wartremoverVersionScala210 = '2.3.7'
     static final String wartremoverVersionScala211 = '2.4.21'
-    // Below can be 3.x, but TraversableOps was renamed to IterableOps. Current default WartremoverSettings are incompatible
-    static final String wartremoverVersionScala212Plus = '2.4.21'
+    static final String wartremoverVersionScala212Plus = '3.4.0'
 
     @Override
     void apply(Project project) {
